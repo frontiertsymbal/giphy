@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">giphy</string>
+    <string name="searchButton">Search</string>
+    <string name="searchHint">Enter your search query</string>
+</resources>
