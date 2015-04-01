@@ -4,9 +4,7 @@ import android.net.Uri;
 
 public class UrlStringBuilder {
 
-    public static String createUrlString(String searchRequest) {
-
-        int limit = 10;
+    public static String createUrlString(String searchRequest, int limit, int offset) {
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
@@ -16,7 +14,8 @@ public class UrlStringBuilder {
                 .appendPath("search")
                 .appendQueryParameter("q", searchRequest)
                 .appendQueryParameter("api_key", Const.API_KEY)
-                .appendQueryParameter("limit", String.valueOf(limit));
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .appendQueryParameter("offset", String.valueOf(offset));
 
         return builder.build().toString().replace("%20", "+");
     }

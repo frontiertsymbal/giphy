@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.Toast;
+import com.costum.android.widget.LoadMoreListView;
 import com.frontier.giphy.model.GiphyItem;
 import com.frontier.giphy.model.GiphyResponse;
 import com.frontier.giphy.utils.Const;
 import com.frontier.giphy.utils.GetRequestToJSonString;
+import com.frontier.giphy.utils.GifAdapter;
 import com.frontier.giphy.utils.UrlStringBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,7 +26,12 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private String url = null;
-    private ListView viewResult;
+    private LoadMoreListView viewResult;
+    private int limit = 10;
+    private int offset = 0;
+    private List<String> stringList = new ArrayList<>();
+    private boolean loadMore = false;
+    private GifAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +39,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         EditText searchRequest = (EditText) findViewById(R.id.searchRequest);
-        viewResult = (ListView) findViewById(R.id.viewResult);
+        viewResult = (LoadMoreListView) findViewById(R.id.viewResult);
 
         findViewById(R.id.buttonSearch).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +48,8 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "Enter a query please", Toast.LENGTH_LONG).show();
                 } else {
                     if (!isOnline()) {
-                        url = UrlStringBuilder.createUrlString(searchRequest.getText().toString());
+                        offset = 0;
+                        url = UrlStringBuilder.createUrlString(searchRequest.getText().toString(), limit, offset);
                         searchRequest.onEditorAction(EditorInfo.IME_ACTION_DONE);
                         Toast.makeText(MainActivity.this, "Searching", Toast.LENGTH_LONG).show();
                         new RequestTask().execute();
@@ -48,6 +57,15 @@ public class MainActivity extends Activity {
                         Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_LONG).show();
                     }
                 }
+            }
+        });
+
+        viewResult.setOnLoadMoreListener(new LoadMoreListView.OnLoadMoreListener() {
+            public void onLoadMore() {
+                loadMore = true;
+                offset += 10;
+                url = UrlStringBuilder.createUrlString(searchRequest.getText().toString(), limit, offset);
+                new LoadMoreTask().execute();
             }
         });
     }
@@ -63,18 +81,47 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(List<GiphyItem> list) {
             if (list.size() != 0) {
-                List<String> stringList = new ArrayList<>();
-
+                stringList.clear();
                 for (GiphyItem aList : list) {
                     stringList.add(aList.getImages().getOriginal().getUrl());
                 }
 
-                viewResult.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, stringList));
+                adapter = new GifAdapter(MainActivity.this, stringList);
+                viewResult.setAdapter(adapter);
+
                 Toast.makeText(MainActivity.this, "Search finish", Toast.LENGTH_LONG).show();
             } else {
                 Log.e(Const.LOG_TAG, "Error loading data");
                 Toast.makeText(MainActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private class LoadMoreTask extends AsyncTask<Void, Void, List<GiphyItem>> {
+
+        @Override
+        protected List<GiphyItem> doInBackground(Void... params) {
+            Gson gson = new GsonBuilder().create();
+            return gson.fromJson(GetRequestToJSonString.getString(url), GiphyResponse.class).getList();
+        }
+
+        @Override
+        protected void onPostExecute(List<GiphyItem> list) {
+            if (list.size() != 0) {
+
+                for (GiphyItem aList : list) {
+                    stringList.add(aList.getImages().getOriginal().getUrl());
+                }
+                adapter.notifyDataSetChanged();
+                viewResult.onLoadMoreComplete();
+            } else {
+                Log.e(Const.LOG_TAG, "Error loading data");
+                Toast.makeText(MainActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        protected void onCancelled() {
+            viewResult.onLoadMoreComplete();
         }
     }
 
