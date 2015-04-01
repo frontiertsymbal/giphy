@@ -30,7 +30,6 @@ public class MainActivity extends Activity {
     private int limit = 10;
     private int offset = 0;
     private List<String> stringList = new ArrayList<>();
-    private boolean loadMore = false;
     private GifAdapter adapter;
 
     @Override
@@ -44,12 +43,12 @@ public class MainActivity extends Activity {
         findViewById(R.id.buttonSearch).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchRequest.getText().length() == 0) {
+                if (searchRequest.getText().toString().trim().length() == 0) {
                     Toast.makeText(MainActivity.this, "Enter a query please", Toast.LENGTH_LONG).show();
                 } else {
                     if (!isOnline()) {
                         offset = 0;
-                        url = UrlStringBuilder.createUrlString(searchRequest.getText().toString(), limit, offset);
+                        url = UrlStringBuilder.createUrlString(searchRequest.getText().toString().trim(), limit, offset);
                         searchRequest.onEditorAction(EditorInfo.IME_ACTION_DONE);
                         Toast.makeText(MainActivity.this, "Searching", Toast.LENGTH_LONG).show();
                         new RequestTask().execute();
@@ -62,7 +61,6 @@ public class MainActivity extends Activity {
 
         viewResult.setOnLoadMoreListener(new LoadMoreListView.OnLoadMoreListener() {
             public void onLoadMore() {
-                loadMore = true;
                 offset += 10;
                 url = UrlStringBuilder.createUrlString(searchRequest.getText().toString(), limit, offset);
                 new LoadMoreTask().execute();
@@ -89,7 +87,7 @@ public class MainActivity extends Activity {
                 adapter = new GifAdapter(MainActivity.this, stringList);
                 viewResult.setAdapter(adapter);
 
-                Toast.makeText(MainActivity.this, "Search finish", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Search finish", Toast.LENGTH_SHORT).show();
             } else {
                 Log.e(Const.LOG_TAG, "Error loading data");
                 Toast.makeText(MainActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
