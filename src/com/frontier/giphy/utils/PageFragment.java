@@ -1,4 +1,4 @@
-package com.frontier.giphy;
+package com.frontier.giphy.utils;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.frontier.giphy.R;
 
 public class PageFragment extends Fragment {
     String url;

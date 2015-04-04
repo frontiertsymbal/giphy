@@ -77,9 +77,16 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, PagerActivity.class);
                 intent.putExtra("urls", (Serializable) stringList);
                 intent.putExtra("position", position);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int tmp = data.getIntExtra("position", 0);
+        Log.i(Const.LOG_TAG, "PagerPosition " + tmp);
+        viewResult.setSelection(tmp);
     }
 
     private class RequestTask extends AsyncTask<Void, Void, List<GiphyItem>> {
