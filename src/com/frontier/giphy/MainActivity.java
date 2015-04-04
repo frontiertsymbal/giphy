@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.costum.android.widget.LoadMoreListView;
 import com.frontier.giphy.model.GiphyItem;
@@ -35,6 +36,7 @@ public class MainActivity extends Activity {
     private int offset = 0;
     private List<String> stringList = new ArrayList<>();
     private GifAdapter adapter;
+    private ImageView imageView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MainActivity extends Activity {
 
         EditText searchRequest = (EditText) findViewById(R.id.searchRequest);
         viewResult = (LoadMoreListView) findViewById(R.id.viewResult);
+        imageView = (ImageView) findViewById(R.id.logo);
 
         findViewById(R.id.buttonSearch).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +110,8 @@ public class MainActivity extends Activity {
 
                 adapter = new GifAdapter(MainActivity.this, stringList);
                 viewResult.setAdapter(adapter);
+
+                imageView.setVisibility(View.INVISIBLE);
 
                 Toast.makeText(MainActivity.this, "Search finish", Toast.LENGTH_SHORT).show();
             } else {
