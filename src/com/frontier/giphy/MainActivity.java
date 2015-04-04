@@ -2,12 +2,14 @@ package com.frontier.giphy;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.costum.android.widget.LoadMoreListView;
@@ -20,11 +22,13 @@ import com.frontier.giphy.utils.UrlStringBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
 
+    private static final int REQUEST_CODE = 1;
     private String url = null;
     private LoadMoreListView viewResult;
     private int limit = 10;
@@ -64,6 +68,16 @@ public class MainActivity extends Activity {
                 offset += 10;
                 url = UrlStringBuilder.createUrlString(searchRequest.getText().toString(), limit, offset);
                 new LoadMoreTask().execute();
+            }
+        });
+
+        viewResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, PagerActivity.class);
+                intent.putExtra("urls", (Serializable) stringList);
+                intent.putExtra("position", position);
+                startActivity(intent);
             }
         });
     }
