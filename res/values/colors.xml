@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#ff350821</color>
-    <color name="imageViewBg">#d5110409</color>
+    <color name="bg">#ff000000</color>
 </resources>

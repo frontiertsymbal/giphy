@@ -1,5 +1,6 @@
 package com.frontier.giphy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +39,11 @@ public class PagerActivity extends FragmentActivity {
         intent.putExtra("position", tmp);
         setResult(RESULT_OK, intent);
         finish();
+        showActivityAnimation(PagerActivity.this);
 
+    }
+
+    public static void showActivityAnimation(Activity activity) {
+        activity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
     }
 }

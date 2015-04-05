@@ -81,6 +81,7 @@ public class MainActivity extends Activity {
                 intent.putExtra("urls", (Serializable) stringList);
                 intent.putExtra("position", position);
                 startActivityForResult(intent, REQUEST_CODE);
+                showActivityAnimation(MainActivity.this);
             }
         });
     }
@@ -110,9 +111,8 @@ public class MainActivity extends Activity {
 
                 adapter = new GifAdapter(MainActivity.this, stringList);
                 viewResult.setAdapter(adapter);
-
                 imageView.setVisibility(View.INVISIBLE);
-
+                
                 Toast.makeText(MainActivity.this, "Search finish", Toast.LENGTH_SHORT).show();
             } else {
                 Log.e(Const.LOG_TAG, "Error loading data");
@@ -152,5 +152,9 @@ public class MainActivity extends Activity {
     private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() == null;
+    }
+
+    public static void showActivityAnimation(Activity activity) {
+        activity.overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 }
